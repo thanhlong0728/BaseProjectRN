@@ -25,9 +25,17 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-target 'BaseProjectRN' do
-  config = use_native_modules!
+abstract_target 'BaseProjectRNCommonPods' do
+  target 'BaseProjectRN' do
+    use_modular_headers!
+      pod 'RealmSwift','~> 10.28.5', :modular_headers => true
+  end
 
+  pod 'Toast-Swift', '~> 5.0.1'
+  pod 'SDWebImage', :modular_headers => true
+  pod 'SDWebImageWebPCoder', :modular_headers => true
+
+  config = use_native_modules!
   use_react_native!(
     :path => config[:reactNativePath],
     # Enables Flipper.
