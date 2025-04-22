@@ -119,6 +119,7 @@ public final class MainViewController: UIViewController {
   private func connectAPI() {
     
     NetworkManager.shared.connectAPI { (result: Result<[String: Any], APIError>) in
+      print("result:::: \(result)")
       switch result {
       case .success(let data):
         RealmManager.shared.setARGearData(data) { [weak self] success in

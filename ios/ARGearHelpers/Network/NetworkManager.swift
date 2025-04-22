@@ -9,15 +9,11 @@
 import Foundation
 import ARGear
 
-//ARGEAR_API_HOST = https://apis.argear.io/api/v3/
-//ARGEAR_API_KEY = 2689ddf953bcfefb383314fd
-//ARGEAR_API_SECRET_KEY = 91fa66a28ba45ade1fe8fe163515f7226b3f8a2c2405a7ad6ae4c3011a6c0791
-//ARGEAR_API_AUTH_KEY = U2FsdGVkX19laYajo5v5vZA2boWoUSzPVrOTSBVTlAIkRk0qOiUzwLFfx6vYlq10
 
-let API_HOST = "https://apis.argear.io/api/v3/"
-let API_KEY = "2689ddf953bcfefb383314fd"
-let API_SECRET_KEY = "91fa66a28ba45ade1fe8fe163515f7226b3f8a2c2405a7ad6ae4c3011a6c0791"
-let API_AUTH_KEY = "U2FsdGVkX19laYajo5v5vZA2boWoUSzPVrOTSBVTlAIkRk0qOiUzwLFfx6vYlq10"
+let API_HOST = ""
+let API_KEY = ""
+let API_SECRET_KEY = ""
+let API_AUTH_KEY = ""
 
 enum APIError: Error {
     case network
@@ -35,14 +31,14 @@ enum DownloadError: Error {
 class NetworkManager {
 
     static let shared = NetworkManager()
-    
+
     var argSession: ARGSession?
-    
+
     init() {
     }
-    
+
     func connectAPI(completion: @escaping (Result<[String: Any], APIError>) -> Void) {
-      let urlString = API_HOST + API_KEY // + "?dev=true"
+      let urlString = API_HOST + API_KEY  + "?dev=true"
         let url = URL(string: urlString)!
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             if let _ = error {
@@ -51,24 +47,24 @@ class NetworkManager {
                 guard let data = data else {
                     return completion(.failure(.data))
                 }
-                
+
                 guard let json: [String : Any] = try? JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] else {
                     return completion(.failure(.serializeJSON))
                 }
-                
+
                 completion(.success(json))
             }
         }
         task.resume()
     }
-    
+
     func downloadItem(_ item: Item, completion: @escaping (Result<URL, DownloadError>) -> Void) {
         guard let session = self.argSession, let auth = session.auth
             else {
                 completion(.failure(.auth))
                 return
         }
-        
+
         guard let zipUrl = item.zip_file
             else {
                 completion(.failure(.content))
@@ -82,7 +78,7 @@ class NetworkManager {
                         completion(.failure(.auth))
                         return
                 }
-                
+
                 // download task
                 let authUrl = URL(string: url)!
                 let task = URLSession.shared.downloadTask(with: authUrl) { (downloadUrl, response, error) in
